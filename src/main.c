@@ -1,38 +1,39 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
-#include "shell.h"
+
+#include "../include/shell.h"
+#include "../include/input.h"
 
 int main()
 {
-    char input[1024];
+    char *line;
 
-    printf("=====================================\n");
-    printf(" Welcome to ShellForge Version 1.0\n");
-    printf("=====================================\n");
+    printf("=================================\n");
+    printf("%s Version %s\n", SHELL_NAME, VERSION);
+    printf("=================================\n");
 
     while (1)
     {
         printf("myshell> ");
-        fflush(stdout);
 
-        if (fgets(input, sizeof(input), stdin) == NULL)
+        line = read_line();
+
+        if (strcmp(line, "exit") == 0)
+        {
+            free(line);
             break;
+        }
 
-        input[strcspn(input, "\n")] = '\0';
+        if (strlen(line) != 0)
+        {
+            printf("You entered : %s\n", line);
+        }
 
-        if (input[0] == '\0')
-            continue;
-
-        int result = handle_builtin(input);
-
-        if (result == 1)
-            break;
-
-        if (result == 0)
-            continue;
-
-        execute_command(input);
+        free(line);
     }
+
+    printf("Goodbye!\n");
 
     return 0;
 }

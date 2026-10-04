@@ -1,12 +1,19 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -Iinclude
+CFLAGS = -Wall -Wextra -g -Iinclude
+
+SRC = src/main.c \
+      src/input.c
 
 TARGET = bin/shellforge
 
-SRC = src/main.c src/execute.c src/builtin.c
+all: $(TARGET)
 
-all:
+$(TARGET):
+	mkdir -p bin
 	$(CC) $(CFLAGS) $(SRC) -o $(TARGET)
 
+run:
+	./$(TARGET)
+
 clean:
-	rm -f $(TARGET)
+	rm -rf bin/*
