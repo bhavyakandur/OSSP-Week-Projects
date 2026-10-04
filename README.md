@@ -1,15 +1,106 @@
-# ShellForge
+# ShellForge - Cloud Administration Shell
 
-ShellForge is a Unix-like shell developed as part of the Operating Systems and Systems Programming Project-Based Learning course.
+## OSSP Week 1 Project
 
-## Features (Week 1)
+ShellForge is a simple Linux command-line shell developed as part of the
+Operating Systems and System Programming (OSSP) course.
 
-- Interactive REPL loop
-- Makefile-based build
-- Git repository
-- Linux development environment
+The project demonstrates important operating-system concepts such as
+process creation, process execution, inter-process communication,
+file descriptors, input/output redirection, and process synchronization.
 
-## Build
+---
 
-```bash
-make
+## Objective
+
+The objective of ShellForge is to understand how a command-line shell
+works internally and how Linux creates and manages processes.
+
+The shell accepts commands from the user, creates child processes when
+required, executes Linux programs, waits for processes, and supports
+basic shell features.
+
+---
+
+## Features
+
+- Interactive shell prompt
+- Command input handling
+- `exit` command
+- Linux command execution using `execvp()`
+- Process creation using `fork()`
+- Process synchronization using `waitpid()`
+- Directory changing using `chdir()`
+- Current directory using `getcwd()`
+- Command arguments
+- Output redirection using `>`
+- Append output redirection using `>>`
+- Input redirection using `<`
+- Pipe communication using `|`
+- Background command execution using `&`
+- Basic error handling
+
+---
+
+## Technologies Used
+
+- C Programming Language
+- Linux / Ubuntu
+- GCC Compiler
+- POSIX System Calls
+- Git and GitHub
+
+---
+
+## OS Concepts Demonstrated
+
+### Process Creation
+
+`fork()` creates a new child process.
+
+### Program Execution
+
+`execvp()` replaces the child process with the requested Linux command.
+
+### Process Synchronization
+
+`waitpid()` allows the shell to wait for foreground processes.
+
+### Directory Management
+
+`chdir()` changes the current working directory.
+
+### File Descriptors
+
+`open()`, `close()`, and `dup2()` are used for file redirection.
+
+### Inter-Process Communication
+
+`pipe()` connects the output of one process to the input of another.
+
+---
+
+## Project Structure
+
+```text
+OSSP-PBL/
+│
+├── Makefile
+├── README.md
+│
+├── bin/
+│   └── shellforge
+│
+├── docs/
+│
+├── include/
+│   └── shell.h
+│
+├── screenshots/
+│
+├── src/
+│   ├── main.c
+│   ├── execute.c
+│   └── builtin.c
+│
+└── tests/
