@@ -9,12 +9,12 @@ void execute_command(char *input)
     char *args[64];
     int i = 0;
 
-    char *token = strtok(input, " ");
+    char *token = strtok(input, " \t");
 
     while (token != NULL && i < 63)
     {
         args[i++] = token;
-        token = strtok(NULL, " ");
+        token = strtok(NULL, " \t");
     }
 
     args[i] = NULL;
