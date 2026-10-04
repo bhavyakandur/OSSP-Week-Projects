@@ -7,6 +7,108 @@
 
 void execute_command(char *input)
 {
+    char *pipe_position = strchr(input, '|');
+
+    if (pipe_position != NULL)
+    {
+        *pipe_position = '\0';
+
+        char *left_command = input;
+        char *right_command = pipe_position + 1;
+
+        char *left_args[64];
+        char *right_args[64];
+
+        int i = 0;
+        int j = 0;
+
+        char *token = strtok(left_command, " \t");
+
+        while (token != NULL && i < 63)
+        {
+            left_args[i++] = token;
+            token = strtok(NULL, " \t");
+        }
+
+        left_args[i] = NULL;
+
+        token = strtok(right_command, " \t");
+
+        while (token != NULL && j < 63)
+        {
+            right_args[j++] = token;
+            token = strtok(NULL, " \t");
+        }
+
+        right_args[j] = NULL;
+
+        if (left_args[0] == NULL || right_args[0] == NULL)
+        {
+            fprintf(stderr, "Syntax error: invalid pipe\n");
+            return;
+        }
+
+        int pipefd[2];
+
+        if (pipe(pipefd) == -1)
+        {
+            perror("pipe failed");
+            return;
+        }
+
+        pid_t first_pid = fork();
+
+        if (first_pid < 0)
+        {
+            perror("fork failed");
+            return;
+        }
+
+        if (first_pid == 0)
+        {
+            close(pipefd[0]);
+
+            dup2(pipefd[1], STDOUT_FILENO);
+
+            close(pipefd[1]);
+
+            execvp(left_args[0], left_args);
+
+            perror("command execution failed");
+            _exit(1);
+        }
+
+        pid_t second_pid = fork();
+
+        if (second_pid < 0)
+        {
+            perror("fork failed");
+            return;
+        }
+
+        if (second_pid == 0)
+        {
+            close(pipefd[1]);
+
+            dup2(pipefd[0], STDIN_FILENO);
+
+            close(pipefd[0]);
+
+            execvp(right_args[0], right_args);
+
+            perror("command execution failed");
+            _exit(1);
+        }
+
+        close(pipefd[0]);
+        close(pipefd[1]);
+
+        waitpid(first_pid, NULL, 0);
+        waitpid(second_pid, NULL, 0);
+
+        return;
+    }
+
     char *args[64];
     int i = 0;
 
@@ -98,13 +200,7 @@ void execute_command(char *input)
                 _exit(1);
             }
 
-            if (dup2(fd, STDIN_FILENO) < 0)
-            {
-                perror("dup2 failed");
-                close(fd);
-                _exit(1);
-            }
-
+            dup2(fd, STDIN_FILENO);
             close(fd);
         }
 
@@ -125,13 +221,7 @@ void execute_command(char *input)
                 _exit(1);
             }
 
-            if (dup2(fd, STDOUT_FILENO) < 0)
-            {
-                perror("dup2 failed");
-                close(fd);
-                _exit(1);
-            }
-
+            dup2(fd, STDOUT_FILENO);
             close(fd);
         }
 
