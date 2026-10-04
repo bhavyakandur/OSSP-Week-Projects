@@ -123,3 +123,10 @@ OSSP-PBL/
 - Dynamic argv[] construction
 - Modular parser implementation
 - Ready for process execution with execvp()
+
+## Week 4 Features
+
+- Process creation using fork()
+- Command execution using execvp()
+- Parent-child synchronization using waitpid()
+- Error handling using perror()
