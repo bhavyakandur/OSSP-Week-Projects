@@ -68,7 +68,11 @@ void execute_command(char *input)
         {
             close(pipefd[0]);
 
-            dup2(pipefd[1], STDOUT_FILENO);
+            if (dup2(pipefd[1], STDOUT_FILENO) < 0)
+            {
+                perror("dup2 failed");
+                _exit(1);
+            }
 
             close(pipefd[1]);
 
@@ -90,7 +94,11 @@ void execute_command(char *input)
         {
             close(pipefd[1]);
 
-            dup2(pipefd[0], STDIN_FILENO);
+            if (dup2(pipefd[0], STDIN_FILENO) < 0)
+            {
+                perror("dup2 failed");
+                _exit(1);
+            }
 
             close(pipefd[0]);
 
@@ -118,6 +126,7 @@ void execute_command(char *input)
     int append = 0;
     int input_redirect = 0;
     int output_redirect = 0;
+    int background = 0;
 
     char *token = strtok(input, " \t");
 
@@ -167,6 +176,10 @@ void execute_command(char *input)
 
             output_file = token;
         }
+        else if (strcmp(token, "&") == 0)
+        {
+            background = 1;
+        }
         else
         {
             args[i++] = token;
@@ -200,7 +213,13 @@ void execute_command(char *input)
                 _exit(1);
             }
 
-            dup2(fd, STDIN_FILENO);
+            if (dup2(fd, STDIN_FILENO) < 0)
+            {
+                perror("dup2 failed");
+                close(fd);
+                _exit(1);
+            }
+
             close(fd);
         }
 
@@ -221,7 +240,13 @@ void execute_command(char *input)
                 _exit(1);
             }
 
-            dup2(fd, STDOUT_FILENO);
+            if (dup2(fd, STDOUT_FILENO) < 0)
+            {
+                perror("dup2 failed");
+                close(fd);
+                _exit(1);
+            }
+
             close(fd);
         }
 
@@ -231,5 +256,12 @@ void execute_command(char *input)
         _exit(1);
     }
 
-    waitpid(pid, NULL, 0);
+    if (background)
+    {
+        printf("[Background process started: %d]\n", pid);
+    }
+    else
+    {
+        waitpid(pid, NULL, 0);
+    }
 }
