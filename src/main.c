@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
 #include "shell.h"
 
 int main()
@@ -24,6 +25,24 @@ int main()
         {
             printf("Exiting ShellForge...\n");
             break;
+        }
+
+        if (strncmp(input, "cd ", 3) == 0)
+        {
+            char *directory = input + 3;
+
+            if (chdir(directory) != 0)
+            {
+                perror("cd failed");
+            }
+
+            continue;
+        }
+
+        if (strcmp(input, "cd") == 0)
+        {
+            printf("Usage: cd <directory>\n");
+            continue;
         }
 
         execute_command(input);
