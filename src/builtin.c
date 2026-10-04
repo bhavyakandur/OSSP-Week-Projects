@@ -1,49 +1,76 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <limits.h>
 
-int handle_builtin(char *input)
+int execute_builtin(char **args)
 {
-    if (strcmp(input, "exit") == 0)
+    char cwd[1024];
+
+    if (args[0] == NULL)
+        return 1;
+
+    /* exit */
+    if (strcmp(args[0], "exit") == 0)
     {
-        printf("Exiting ShellForge...\n");
+        exit(EXIT_SUCCESS);
+    }
+
+    /* pwd */
+    if (strcmp(args[0], "pwd") == 0)
+    {
+        getcwd(cwd, sizeof(cwd));
+        printf("%s\n", cwd);
         return 1;
     }
 
-    if (strcmp(input, "pwd") == 0)
+    /* cd */
+    if (strcmp(args[0], "cd") == 0)
     {
-        char cwd[PATH_MAX];
-
-        if (getcwd(cwd, sizeof(cwd)) != NULL)
+        if (args[1] == NULL)
         {
-            printf("%s\n", cwd);
+            printf("Usage : cd directory\n");
         }
         else
         {
-            perror("pwd failed");
+            if (chdir(args[1]) != 0)
+                perror("cd");
         }
 
-        return 0;
+        return 1;
     }
 
-    if (strcmp(input, "cd") == 0)
+    /* clear */
+    if (strcmp(args[0], "clear") == 0)
     {
-        printf("Usage: cd <directory>\n");
-        return 0;
+        system("clear");
+        return 1;
     }
 
-    if (strncmp(input, "cd ", 3) == 0)
+    /* help */
+    if (strcmp(args[0], "help") == 0)
     {
-        char *directory = input + 3;
+        printf("\nBuilt-in Commands\n");
+        printf("---------------------------\n");
+        printf("cd\n");
+        printf("pwd\n");
+        printf("clear\n");
+        printf("exit\n");
+        printf("help\n");
+        printf("env\n");
 
-        if (chdir(directory) != 0)
-        {
-            perror("cd failed");
-        }
-
-        return 0;
+        return 1;
     }
 
-    return -1;
+    /* env */
+    if (strcmp(args[0], "env") == 0)
+    {
+        printf("HOME = %s\n", getenv("HOME"));
+        printf("USER = %s\n", getenv("USER"));
+        printf("PATH = %s\n", getenv("PATH"));
+
+        return 1;
+    }
+
+    return 0;
 }
