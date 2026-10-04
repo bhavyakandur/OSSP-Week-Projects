@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include "shell.h"
 
 int main()
 {
@@ -9,16 +10,16 @@ int main()
     printf(" Welcome to ShellForge Version 1.0\n");
     printf("=====================================\n");
 
-    while(1)
+    while (1)
     {
         printf("myshell> ");
 
-        if(fgets(input, sizeof(input), stdin) == NULL)
+        if (fgets(input, sizeof(input), stdin) == NULL)
             break;
 
         input[strcspn(input, "\n")] = '\0';
 
-        if(strcmp(input, "exit") == 0)
+        if (strcmp(input, "exit") == 0)
         {
             printf("Exiting ShellForge...\n");
             break;

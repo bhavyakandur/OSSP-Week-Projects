@@ -1,6 +1,7 @@
 #ifndef SHELL_H
 #define SHELL_H
 
-#define MAX_INPUT 1024
+void start_shell(void);
+void execute_command(char *input);
 
 #endif
