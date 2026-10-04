@@ -3,7 +3,7 @@ CFLAGS = -Wall -Wextra -Iinclude
 
 TARGET = bin/shellforge
 
-SRC = src/main.c
+SRC = src/main.c src/execute.c
 
 all:
 	$(CC) $(CFLAGS) $(SRC) -o $(TARGET)

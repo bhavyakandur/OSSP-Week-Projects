@@ -13,6 +13,7 @@ int main()
     while (1)
     {
         printf("myshell> ");
+        fflush(stdout);
 
         if (fgets(input, sizeof(input), stdin) == NULL)
             break;
@@ -25,7 +26,7 @@ int main()
             break;
         }
 
-        printf("You entered : %s\n", input);
+        execute_command(input);
     }
 
     return 0;
